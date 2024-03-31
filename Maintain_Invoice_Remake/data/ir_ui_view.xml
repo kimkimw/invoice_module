@@ -1,0 +1,850 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<odoo>
+
+    <record model="ir.ui.view" id="view_move_line_tree_custom">
+        <field name="name">invoice.line.custom.tree</field>
+        <field name="model">account.move.line</field>
+        <field name="inherit_id" ref="account.view_move_line_tree_grouped_general"></field>
+        <!--      <field name="domain">[('exclude_from_invoice_tab', '=', 'False')]</field>-->
+        <field name="arch" type="xml">
+            <!--          <xpath expr="//field[@name='date']" position="after">-->
+            <xpath expr="//tree" position="replace">
+                <tree default_order="date desc, invoice_no desc">
+                    <!--                  <field name="move_id" optional="show" readonly="1"/>-->
+                    <field name="date" optional="show" readonly="1" string="売上日付"/>
+                    <field name="invoice_no" optional="show" readonly="1"/>
+                    <field name="x_invoicelinetype" optional="show" readonly="1" string="取引/内訳区分"/>
+                    <field name="partner_id" optional="show" readonly="1" string="得意先コード"/>
+                    <field name="x_customer_show_in_tree" optional="show" readonly="1" string="得意先名"/>
+                    <field name="product_barcode" optional="show" readonly="1" string="JANコード"/>
+                    <!--                  <field name="x_product_code_show_in_tree" optional="show" readonly="1"/>-->
+                    <field name="invoice_custom_standardnumber" optional="show" readonly="1" string="品番/型番"/>
+                    <field name="product_maker_cd" optional="show" readonly="1" string="メーカーCD"/>
+                    <field name="product_maker_name" optional="show" readonly="1" string="メーカー名"/>
+                    <field name="product_name" optional="show" readonly="1" string="商品名"/>
+                    <field name="quantity" optional="show" readonly="1" string="数量"/>
+                    <field name="product_uom_id" optional="show" string="単位"/>
+                    <field name="price_unit" optional="show" readonly="1" string="単価"/>
+                    <field name="invoice_custom_lineamount" optional="show" readonly="1" string="金額"/>
+                    <field name="tax_rate" optional="show" readonly="1" string="税率"/>
+                    <field name="tax_ids" widget="many2many_tags"
+                           domain="[('type_tax_use', '=?', parent.invoice_filter_type_domain), ('company_id', '=', parent.company_id)]"
+                           context="{'append_type_to_tax_name': not parent.invoice_filter_type_domain}"
+                           options="{'no_create': True}"
+                           optional="show" readonly="1"
+                           string="税率" invisible="1"/>
+                    <field name="x_tax_transfer_show_tree" optional="show" readonly="1" string="税転嫁"/>
+                </tree>
+            </xpath>
+        </field>
+    </record>
+
+    <record model="ir.ui.view" id="invoice_custom_tree">
+        <field name="name">invoice.custom.form</field>
+        <field name="model">account.move</field>
+        <field name="inherit_id" ref="account.view_invoice_tree"/>
+        <field name="arch" type="xml">
+            <xpath expr="//tree" position="replace">
+                <tree class="forward_edit" default_order="x_studio_date_invoiced desc,x_studio_document_no desc">
+                    <button class="o_button_line" string="" icon="fa-toggle-right" name="get_lines"/>
+                    <field name="x_studio_date_invoiced" string="Date Invoiced"/>
+                    <field name="x_studio_document_no" string="Document No"/>
+                    <field name="ref" string="Order Reference"/>
+                    <field name="x_customer_code_for_search" string="Customer"/>
+                    <field name="x_studio_name" string="Customer Name"/>
+                    <field name="customer_trans_classification_code" string="Transaction Class"/>
+                    <!--                    toraya_release_cds_9_1328716797_move_column_to_last_table_longdn_2022_05_11-->
+                    <!--                    Long MOD START 2022/05/11-->
+                    <!--                    <field name="customer_group" string="Customer Group"/>-->
+                    <!--                    <field name="customer_state" string="Customer State"/>-->
+                    <!--                    <field name="customer_industry" string="Customer Industry"/>-->
+                    <!--                    <field name="customer_closing_date" string="Closing Date"/>-->
+                    <!--                    <field name="x_userinput_id" string="userinput_id"/>-->
+                    <!--                    <field name="sales_rep" string="Sales Rep"/>-->
+                    <!-- <field name="state" string="Document Status"/> -->
+                    <field name="amount_untaxed" string="Total Lines" sum="Total" optional="show"/>
+                    <field name="x_voucher_tax_amount" string="Voucher Tax Amount" sum="Total" optional="show"/>
+                    <field name="amount_total" string="Grand Total" sum="Amount Due" optional="show"/>
+                    <field name="state" string="Document Status"/>
+                    <field name="customer_group" string="Customer Group"/>
+                    <field name="customer_state" string="Customer State"/>
+                    <field name="customer_industry" string="Customer Industry"/>
+                    <field name="x_userinput_id" string="userinput_id"/>
+                    <field name="sales_rep" string="Sales Rep"/>
+                    <!--                    Long MOD END 2022/05/11-->
+                </tree>
+            </xpath>
+        </field>
+    </record>
+
+    <!--        search-->
+    <record model="ir.ui.view" id="invoice_custom_search">
+        <field name="name">invoice.custom.search</field>
+        <field name="model">account.move</field>
+        <field name="inherit_id" ref="account.view_account_invoice_filter"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='name']" position="before">
+                <field name="x_studio_document_no" string="Document No"/>
+                <field name="ref" string="Order Reference"/>
+                <field name="x_studio_date_invoiced" string="Date Invoiced"/>
+                <field name="x_customer_code_for_search" string="Customer"/>
+                <field name="x_studio_name" string="Customer Name"/>
+                <field name="x_userinput_id" string="userinput_id"/>
+                <field name="sales_rep" string="Sales Rep"/>
+                <field name="create_date" string="Updated"/>
+                <field name="state" string="Document Status"/>
+                <field name="customer_trans_classification_code" string="Transaction Class"/>
+            </xpath>
+        </field>
+    </record>
+
+
+    <record id="view_move_custom_form" model="ir.ui.view">
+        <field name="name">account.move.custom.form</field>
+        <field name="model">account.move</field>
+        <field name="mode">primary</field>
+        <field name="inherit_id" ref="account.view_move_form"/>
+        <field name="priority">1</field>
+        <field name="arch" type="xml">
+            <!--TH - Custom input Negative Number-->
+            <xpath expr="/form/div[1]" position="replace">
+                <div groups="account.group_account_invoice"
+                     class="alert alert-warning" role="alert" style="margin-bottom:0px;"
+                     attrs="{'invisible': True}">
+                    <field name="tax_lock_date_message" nolabel="1"/>
+                </div>
+            </xpath>
+            <xpath expr="/form/div[2]" position="replace">
+                <div groups="account.group_account_invoice"
+                     class="alert alert-info" role="alert" style="margin-bottom:0px;"
+                     attrs="{'invisible': True}">
+                    You have <bold><a class="alert-link" href="#outstanding" role="button">outstanding
+                    payments</a></bold> for this customer. You can allocate them to mark this invoice as paid.
+                </div>
+            </xpath>
+            <xpath expr="/form/div[3]" position="replace">
+                <div groups="account.group_account_invoice"
+                     class="alert alert-info" role="alert" style="margin-bottom:0px;"
+                     attrs="{'invisible': True}">
+                    You have <bold><a class="alert-link" href="#outstanding" role="button">outstanding debits</a></bold>
+                    for this supplier. You can allocate them to mark this bill as paid.
+                </div>
+            </xpath>
+            <xpath expr="/form/sheet/notebook/page[@id='invoice_tab']/field[@name='invoice_outstanding_credits_debits_widget']"
+                   position="replace">
+                <field name="invoice_outstanding_credits_debits_widget"
+                       class="oe_invoice_outstanding_credits_debits"
+                       colspan="2" nolabel="1" widget="payment"
+                       attrs="{'invisible': True}"/>
+            </xpath>
+            <!--TH - done-->
+            <xpath expr="//field[@name='name']" position="attributes">
+                <attribute name="invisible">1</attribute>
+            </xpath>
+            <xpath expr="//sheet/field[@name='invoice_sequence_number_next_prefix']" position="attributes">
+                <attribute name="invisible">1</attribute>
+            </xpath>
+            <xpath expr="//sheet/field[@name='invoice_sequence_number_next']" position="attributes">
+                <attribute name="invisible">1</attribute>
+            </xpath>
+            <xpath expr="//sheet//div[2]//field[@name='type']" position="attributes">
+                <attribute name="invisible">1</attribute>
+            </xpath>
+            <xpath expr="//sheet//div[2]/span[2]"
+                   attrs="{'invisible': [('invoice_sequence_number_next_prefix', '=', False)]}"
+                   position="attributes">
+                <attribute name="invisible">1</attribute>
+            </xpath>
+            <xpath expr="//sheet//div//field[@name='invoice_sequence_number_next_prefix']" position="attributes">
+                <attribute name="invisible">1</attribute>
+            </xpath>
+            <xpath expr="//sheet//div//field[@name='invoice_sequence_number_next']" position="attributes">
+                <attribute name="invisible">1</attribute>
+            </xpath>
+            <!--        <xpath expr="//form/header/button[@name='action_invoice_register_payment']"  position="attributes">-->
+            <!--            <attribute name="attrs">{'invisible': [('customer_trans_classification_code','!=','cash')]}</attribute>-->
+            <!--        </xpath>-->
+            <xpath expr="//form/header/button[@name='action_invoice_register_payment']" position="replace">
+                <!-- <button name="expense_post_payment" id="account_invoice_payment_btn"
+                         type="object" class="oe_highlight"
+                         attrs="{'invisible': [('customer_trans_classification_code','!=','cash')]}"
+                         string="支払登録"
+                         groups="account.group_account_invoice"/> -->
+            </xpath>
+            <xpath expr="//form/header/button[@name='action_reverse']" position="attributes">
+                <attribute name="invisible">1</attribute>
+            </xpath>
+            <xpath expr="//form/header/button[@name='button_draft']" position="attributes">
+                <attribute name="attrs">{'invisible': ['|', ('restrict_mode_hash_table', '=', True), '|',
+                                                       ('state', 'not in', ('posted', 'cancel')),
+                                                       ('bill_status', '=', 'billed')]}</attribute>
+            </xpath>
+
+            <xpath expr="//form/header/button[@name='action_reverse']" position="after">
+                attrs="{'invisible':[('flag_history','=', 1)]}"
+                <field name="trigger_quotation_history" widget="button_field" z-index="92"
+                       options='{"title":"見積履歴問合せ","model":"sale.order", "text":"見積履歴問合せ"}'
+                       attrs="{'invisible':['|', ('state','in',['posted']), ('flag_history','=', 1)]}"/>
+                <field name="x_history_voucher" widget="button_field" z-index="92"
+                       options='{"title":"売上履歴問合せ","model":"account.move", "text":"売上履歴問合せ"}'
+                       attrs="{'invisible':['|', ('state','in',['posted']), ('flag_history','=', 1)]}"/>
+            </xpath>
+
+            <!--        <xpath expr="//header" position="inside">-->
+            <!--            <button name="fill_data" string="Fill data" class="o_fill_data"/>-->
+            <!--        </xpath>-->
+
+            <!-- BEGIN FORM -->
+            <xpath expr="//group[1]" position="replace">
+                <!--          <div style="text-align: right; font-weight: bold; font-size: 1.2rem; margin-bottom: 20px; margin-right: 80px;">-->
+                <!--            <field name="x_studio_line_info" readonly="1" class="no-border"/>-->
+                <!--          </div>-->
+                <table style="vertical-align: baseline;" class="custom-form-table">
+                    <tbody>
+                        <!-- Row 1 -->
+                        <tr>
+                            <td>
+                                <field name="flag_history" force_save="1" invisible="1"/>
+                                <field name="bill_status" invisible="1"/>
+                                <field name="copy_history_item" invisible="1"/>
+                                <field name="copy_history_from" invisible="1"/>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="col-label"><label for="x_studio_document_no" string="Document No"/></td>
+                            <td class="col-field">
+                                <field style="width:150px!important;float:left!important;" name="x_studio_document_no"
+                                       string="Document No" readonly="1" class="o_input"/>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="col-label"><label for="x_studio_date_invoiced" string="Invoice Date*"/></td>
+                            <td class="col-field"><field name="x_studio_date_invoiced" string="Invoice Date*"
+                                                         placeholder="年　月　日" required="1" z-index="94"
+                                                         attrs="{'readonly':[('state','in',['posted'])]}"/></td>
+
+                            <td class="col-label"><label for="x_studio_date_shipment" string="shipmentdate*"/></td>
+                            <td class="col-field"><field name="x_studio_date_shipment" string="shipmentdate*"
+                                                         placeholder="年　月　日" required="1" z-index="95"
+                                                         attrs="{'readonly':[('state','in',['posted'])]}"/></td>
+
+                            <td class="col-label"><label for="x_userinput_id" string="userinput_id"/></td>
+<!--MOD - LIEM - 20230604 - START -->
+<!--                            <td class="col-field"><field name="x_userinput_id" string="userinput_id"-->
+<!--                                                         z-index="91" attrs="{'readonly':[('state','in',['posted'])]}"-->
+<!--                                                         class="o_input"-->
+<!--                                                         options="{'no_quick_create':True,'no_create_edit':True, 'no_open' : True}"/></td>-->
+                            <td class="col-field"><field name="x_userinput_id" string="userinput_id"
+                                                         z-index="91" attrs="{'readonly':[('state','in',['posted'])]}"
+                                                         class="o_input"
+                                                         options="{'always_reload': True, 'reload_on_button': True, 'no_quick_create': True, 'no_create_edit': True, 'no_open': True, 'no_create': True}"/></td>
+<!--MOD - LIEM - 20230604 - END -->
+
+                            <td class="col-label"><label for="customer_trans_classification_code"
+                                                         string="Transaction Class*"/></td>
+                            <td class="col-field">
+                                <field name="customer_trans_classification_code" string="Transaction Class*"
+                                       required="1" attrs="{'readonly':[('state','in',['posted'])]}"/>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="col-label"><label for="x_studio_business_partner" string="Customer*"/></td>
+                            <td class="col-field">
+                                <field name="x_studio_business_partner" required="1" domain="[('customer_rank','>', 0)]"
+                                       default_focus="1"
+                                       context="{'showemail': 'ok','res_partner_search_mode': 'customer'}"
+                                       attrs="{'readonly':[('state','in',['posted'])]}" z-index="98"
+                                       options="{'no_quick_create':True,'no_create_edit':True, 'no_open' : True, 'no_create': True}"/>
+                            </td>
+                            <td colspan="2"><field name="x_studio_name" string="Name" class="o_address_street"
+                                                   style="width : 100%;"
+                                                   placeholder="Name..." force_save="1" widget="input" z-index="99"
+                                                   attrs="{'readonly':[('state','in',['posted'])]}"/></td>
+
+                            <td class="col-label"><label for="ref" string="Order Reference"/></td>
+                            <td class="col-field"><field name="ref" string="Order Reference" z-index="92"
+                                                         attrs="{'readonly':[('state','in',['posted'])]}"
+                                                         class="o_input"/></td>
+
+                            <td class="col-label"><label for="x_voucher_tax_transfer" string="Tax Transfer*"/></td>
+                            <td class="col-field"><field name="x_voucher_tax_transfer" string="Tax Transfer*"
+                                                         z-index="107" attrs="{'readonly':[('state','in',['posted'])]}"
+                                                         required="True"/></td>
+
+                            <td class="col-label"><label for="x_studio_price_list" string="Price List*"
+                                                         invisible="1"/></td>
+                            <td class="col-field"><field name="x_studio_price_list" string="Price List*"
+                                                         attrs="{'readonly':[('state','in',['posted'])]}" force_save="1"
+                                                         invisible="1" z-index="93"/></td>
+
+                        </tr>
+                        <tr>
+                            <td></td>
+                            <td></td>
+                            <td colspan="2" class="col-field"><field name="x_bussiness_partner_name_2" string="名称2"
+                                                                     placeholder="Name 2..."
+                                                                     attrs="{'readonly':[('state','in',['posted'])]}"
+                                                                     force_save="1" z-index="93"/></td>
+                            <td class="col-label"><label for="sales_rep" string="Sales Rep"/><br/>
+                                <label style="margin: 8px 5px 0 0 !important;" for="partner_department"
+                                       string="Partner Department*"/>
+                            </td>
+<!--MOD - LIEM - 20230604 - START -->
+<!--                            <td class="col-field"><field name="sales_rep" string="Sales Rep" z-index="96"-->
+<!--                                                         attrs="{'readonly':[('state','in',['posted'])]}"-->
+<!--                                                         options="{'no_quick_create':True,'no_create_edit':True , 'no_open' : True}"-->
+<!--                                                         class="o_input"/>-->
+                            <td class="col-field"><field name="sales_rep" string="Sales Rep" z-index="96"
+                                                         attrs="{'readonly':[('state','in',['posted'])]}"
+                                                         domain="[('employee_code', '!=', False)]"
+                                                         options="{'always_reload': True, 'reload_on_button': True, 'no_quick_create': True, 'no_create_edit': True, 'no_open': True, 'no_create': True}"
+                                                         class="o_input"/>
+<!--MOD - LIEM - 20230604 - END -->
+<!--MOD - LIEM - 20230604 - START -->
+<!--                                <field name="partner_department"-->
+<!--                                       options="{'no_quick_create':True,'no_create_edit':True , 'no_open' : True}"-->
+<!--                                       class="o_input"/>-->
+                                <field name="partner_department"
+                                       attrs="{'readonly':[('state','in',['posted'])]}"
+                                       domain="[('parent_id','=', False), ('department_code','!=', False)]"
+                                       options="{'always_reload': True, 'reload_on_button': True, 'no_quick_create': True, 'no_create_edit': True, 'no_open': True, 'no_create': True}"
+                                       class="o_input"/>
+<!--MOD - LIEM - 20230604 - END -->
+                            </td>
+
+                            <td class="col-label"><label for="x_studio_date_printed" string="Date Printed"/></td>
+                            <td class="col-field">
+                                <field autocomplete="off" name="x_studio_date_printed" string="Date Printed"
+                                       placeholder="年　月　日" z-index="100"
+                                       attrs="{'invisible':[('state', 'in', ['posted']), ('x_studio_date_printed', '=', False)], 'readonly':[('state', 'in', ['posted']), ('x_studio_date_printed', '!=', False)]}"/>
+                                <label for="x_studio_date_printed" string="年　月　日"
+                                       attrs="{'invisible':['|', ('state','not in',['posted']), ('x_studio_date_printed','!=',False)]}"/>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="col-label"><label for="x_studio_address_1" string="Address"/></td>
+                            <td colspan="3" class="col-field"><field name="x_studio_address_1" string="Address 1"
+                                                                     class="o_address_city"
+                                                                     placeholder="Address 1..." force_save="1"
+                                                                     widget="input" z-index="101"
+                                                                     attrs="{'readonly':[('state','in',['posted'])]}"/></td>
+                            <td class="col-label"><label for="customer_closing_date" string="Closing Date"/></td>
+                            <td class="col-field"><field name="customer_closing_date" string="Closing Date" readonly="1"
+                                                         widget="custom_field_many2one" allowfocus="false"
+                                                         force_save="1" options='{"no_open":True}'/></td>
+                            <td class="col-label"><label for="x_studio_payment_rule_1" string="Payment Rule"/></td>
+                            <td class="col-field"><field name="x_studio_payment_rule_1" string="Payment Rule"
+                                                         widget="custom_field_selection"  allowfocus="false"
+                                                         attrs="{'readonly':[('state','in',['posted'])]}"
+                                                         z-index="97"/></td>
+                        </tr>
+                        <tr>
+                            <td></td>
+                            <td colspan="3" class="col-field"><field name="x_studio_address_2" string="Address 2"
+                                                                     class="o_address_city"
+                                                                     placeholder="Address 2..." force_save="1"
+                                                                     widget="input" z-index="102"
+                                                                     attrs="{'readonly':[('state','in',['posted'])]}"/></td>
+                            <!--              <td class="col-label"><label for="customer_closing_date" string="Closing Date" /></td>-->
+                            <!--              <td class="col-field"><field name="customer_closing_date" string="Closing Date" readonly="1" force_save="1" options='{"no_open":True}'/></td>-->
+                            <td class="col-label"><label for="invoice_payment_terms_custom" string="Payment Term"
+                                                         attrs=" {'invisible': [ ('x_studio_payment_rule_1','in',['rule_cash','rule_check','rule_credit', False])]} "/></td>
+                            <td class="col-field">
+                                <field name="invoice_payment_terms_custom"
+                                        widget="custom_field_many2one" allowfocus="false"
+                                       class="o_input" force_save="1"
+                                       attrs=" {'invisible': [ ('x_studio_payment_rule_1','in',['rule_cash','rule_check','rule_credit', False])]}"
+                                       options="{'no_quick_create':True,'no_create_edit':True, 'no_open' : True}"/>
+                            </td>
+                            <!-- <td class="col-label"><label for="x_voucher_deadline" string="締切"/></td>
+                            <td class="col-field"><field name="x_voucher_deadline" string="締切" z-index="107" attrs="{'readonly':[('state','in',['posted'])]}"/></td> -->
+                            <!--              <td class="col-label"><label for="x_studio_payment_rule_1" string="Payment Rule"/></td>-->
+                            <!--              <td class="col-field"><field name="x_studio_payment_rule_1" string="Payment Rule" attrs="{'readonly':[('state','in',['posted'])]}" z-index="97"/></td>-->
+                            <td></td>
+                            <td></td>
+                        </tr>
+                        <tr>
+                            <!-- Column 1 -->
+                            <td class="col-label"><label for="x_studio_summary" string="Summary"/></td>
+                            <td colspan="3" class="col-field"><field name="x_studio_summary" string="Summary"
+                                                                     widget="input" z-index="107"
+                                                                     attrs="{'readonly':[('state','in',['posted'])]}"/></td>
+                            <!-- <td class="col-label"><label for="customer_closing_date" string="Closing Date" /></td>
+                            <td class="col-field"><field name="customer_closing_date" string="Closing Date" readonly="1" force_save="1" options='{"no_open":True}'/></td> -->
+                            <!--              <td class="col-label"><label for="invoice_payment_terms_custom" string="Payment Term"-->
+                            <!--                                           attrs=" {'invisible': [ ('x_studio_payment_rule_1','in',['rule_cash','rule_check','rule_credit', False])]} "/></td>-->
+                            <!--              <td class="col-field">-->
+                            <!--                  <field name="invoice_payment_terms_custom"-->
+                            <!--                         class="o_input" force_save="1"-->
+                            <!--                         attrs=" {'invisible': [ ('x_studio_payment_rule_1','in',['rule_cash','rule_check','rule_credit', False])]}"-->
+                            <!--                         options="{'no_quick_create':True,'no_create_edit':True, 'no_open' : True}"/>-->
+                            <!--              </td>-->
+                            <td class="col-label"><label for="delivery_id" string="Delivery ID"/></td>
+                            <!--                <td class="col-field"><field name="delivery_id"-->
+                            <!--                                       domain="[('delivery_rank','>', 0), ('active','=', True), ('partner_id','=', x_studio_business_partner)]"-->
+                            <!--                                       attrs="{'readonly':[('state','in',['posted'])]}"-->
+                            <!--                                       options="{'no_quick_create':True,'no_create_edit':True, 'reload_on_button': True, 'no_open': True, 'no_create': True, 'no_edit': True}"/></td>-->
+                            <td class="col-field"><field name="delivery_id"
+                                                         domain="[('delivery_rank','>', 0), ('active','=', True)]"
+                                                         attrs="{'readonly':[('state','in',['posted'])]}"
+                                                         options="{'no_quick_create':True,'no_create_edit':True, 'reload_on_button': True, 'no_open': True, 'no_create': True, 'no_edit': True}"/></td>
+
+                            <td class="col-field"><field name="x_studio_address_3" invisible="1"/></td>
+                            <td class="col-field"><field name="customer_tax_rounding" string="消費税端数処理"
+                                                         z-index="107" invisible="True"/></td>
+                        </tr>
+                        <tr>
+                            <td></td>
+                            <td colspan="3"></td>
+                            <td class="col-label"><label for="delivery_name" string="Delivery Name"/></td>
+                            <td class="col-field"><field name="delivery_name"
+                                                         attrs="{'readonly':[('state','in',['posted'])]}"/></td>
+                            <td class="col-label"><label for="delivery_address" string="Delivery Address"/></td>
+                            <td class="col-field"><field name="delivery_address" style="width: 230px;"
+                                                         attrs="{'readonly':[('state','in',['posted'])]}"/></td>
+                        </tr>
+                        <tr>
+                            <!-- Column 1 -->
+                            <td class="col-label"><label for="amount_untaxed" string="Total Lines*"
+                                                         invisible="True"/></td>
+                            <td class="col-field"><field name="amount_untaxed" widget="float" invisible="True"
+                                                         string="Total Lines*" required="1" readonly="1" class="o_input"
+                                                         style="text-align:right; justify-content: flex-end;"/></td>
+
+                            <!-- Column 2 -->
+                            <td class="col-label"><label for="x_voucher_tax_amount" invisible="True"
+                                                         string="Voucher Tax Amount*"/></td>
+                            <td class="col-field"><field name="x_voucher_tax_amount" invisible="True"
+                                                         attrs="{'readonly': [('x_voucher_tax_transfer', '!=', 'custom_tax')]}"
+                                                         string="Voucher Tax Amount*" class="o_input"
+                                                         style="text-align:right; justify-content: flex-end;"/></td>
+
+                            <!-- Column 3 -->
+                            <td class="col-label"><label for="amount_total" invisible="True"
+                                                         string="Grand Total*"/></td>
+                            <td class="col-field"><field name="amount_total" invisible="True" string="Grand Total*"
+                                                         required="1" readonly="1" class="o_input"
+                                                         style="text-align:right; justify-content: flex-end;"/></td>
+                            <!-- Column 4-->
+
+                            <field name="customer_office" string="Customer Office" invisible="1"/>
+                            <!--              <td class="col-label"><label for="customer_from_date" string="customer_from_date" /></td>-->
+                            <field name="customer_from_date" force_save="1" invisible="1"/>
+                        </tr>
+
+                        <!-- Row 10 -->
+                        <tr>
+                            <!-- Column 1 -->
+                            <td class="col-label"><label for="state" string="Document Status*" invisible="1"/></td>
+                            <td class="col-field"><field name="state" string="Document Status*" required="1"
+                                                         class="o_input" invisible="1"/></td>
+
+                            <!-- Column 2 -->
+                            <field name="customer_group" string="Customer Group" invisible="1"/>
+                            <field name="customer_state" string="Customer State" invisible="1"/>
+                            <field name="customer_industry" string="Customer Industry" invisible="1"/>
+                            <field name="customer_trans_classification_code" string="Transaction classification"
+                                   invisible="1" force_save="1"/>
+                            <!--                <field name="customer_closing_date" string="Closing Date" invisible="1"/>-->
+                            <td></td>
+                            <td class="col-field"></td>
+                            <td class="col-label"><label for="closing_date_compute" string="Closing Date Compute"
+                                                         invisible="1"/></td>
+                            <td class="col-field"><field name="closing_date_compute" string="Closing Date Compute"
+                                                         invisible="1"/></td>
+                        </tr>
+                    </tbody>
+                </table>
+                <div id="loading-indicator" class="loading-indicator text-center hide" >
+                    <div>
+                        <div class="spinner-border" role="status">
+                            <span class="sr-only"/>
+                        </div>
+                        <p>処理中..</p>
+                    </div>
+                </div>
+
+                <!--<field name="currency_id"
+                             groups="base.group_multi_currency"
+                             attrs="{'invisible': [('type', 'not in', ('out_invoice', 'out_refund', 'in_invoice', 'in_refund'))]}"/>
+                <field name="journal_id"
+                   invisible="context.get('default_journal_id') and context.get('type', 'entry') != 'entry'"
+                   groups="account.group_account_user"
+                   options="{'no_create': True}"
+                   domain="[('type', '=?', invoice_filter_type_domain)]"
+                   attrs="{'readonly': [('name', '!=', '/')]}"/>-->
+                <field name="currency_id" groups="base.group_multi_currency" invisible="1"/>
+                <field name="journal_id" invisible="1"/>
+                <field name="partner_id" invisible="1"/>
+                <field name="line_len" invisible="1"/>
+            </xpath>
+            <!-- END FORM -->
+            <xpath expr="//field[@name='invoice_line_ids']" poisition="attributes">
+                <attribute name="context">{'default_line_ids': line_ids, 'default_move_id': id,
+                                           'journal_id': journal_id, 'default_partner_id': commercial_partner_id,
+                                           'default_currency_id': currency_id != company_currency_id and currency_id or False}</attribute>
+            </xpath>
+
+        <xpath expr = "//field[@name='invoice_line_ids']/tree" position = "replace" >
+            <tree editable="bottom" class="invoice_create" string="Journal Items" default_order="invoice_custom_line_no asc" widget="section_and_note_one2many" context="{'show_address': 1}">
+                <control>
+                    <create name="add_product_control" string="Add a product"/>
+                    <create name="add_product_control_custom" string="商品追加"/>
+                    <create name="search_multi_product_control" string="Add multi products"/>
+                    <create name="search_from_quotation_control" widget="button_field" string="Search from quotation"/>
+                    <create name="search_from_invoice_control" string="Search from invoice"/>
+                </control>
+                <!-- Displayed fields -->
+                <field name="sequence" widget="handle"/>
+                <field id="line_no_input" name="line_no_input" string="移動"
+                       style="border: 1px solid !important;;
+                       text-align: center !important;;
+                       border-radius: 5px !important;;
+                       width: 45px !important;;
+                       overflow: hidden;;
+                       text-overflow: ellipsis;"
+                       autocomplete="off"
+                />
+                <button name="button_goto"
+                        class="button_goto"
+                        style="background : url('/Maintain_Quotations/static/src/img/icons8-hand.png') no-repeat center;
+                        background-size:contain;background-color: transparent;
+                        display: inline-block; margin-left: 1px;
+                        margin-right: 1px; width: 20px; height: 20px;
+                        padding: 1px;border: none;">
+                </button>
+                <button name="button_update"
+                        class="button_update"
+                  style="background : url('/web/static/src/img/form-toolbar/copy.png') no-repeat center;background-size:contain;background-color: transparent; display: inline-block; margin-left: 1px; margin-right: 1px; width: 16px; height: 16px; padding: 1px;border: none;" >
+                </button>
+                <button name="button_add"
+                        class="button_add"
+                    style="background : url('/Maintain_Quotations/static/src/img/icon_add.png') no-repeat center;
+                    background-size:contain;background-color: transparent;
+                    display: inline-block; margin-left: 1px;
+                    margin-right: 1px; width: 16px; height: 16px;
+                    padding: 1px;border: none;">
+                </button>
+                <field name="x_history_detail" invisible="True" style="display:none" domain="[('exclude_from_invoice_tab', '=', False)]" position="attributes"  widget="button_field" options='{"model":"account.move.line", "sort_cut": true, "text":"売上履歴問合せ"}' context="{'tree_view_ref':'account.view_move_line_tree_grouped_general'}"/>
+                <field name="invoice_custom_line_no" readonly="1"/>
+                <field name="x_invoicelinetype" required="True" string="内訳区分"/>
+<!--                <field name="product_id" string="Product Code"  widget="product_many2one" context="{'show_product_code': 1}" attrs="{'required': [('parent.type', 'not in', ('in_invoice', 'in_refund','in_receipt'))]}"  domain="['|', ('company_id', '=', False), ('company_id', '=', parent.company_id)]"/>-->
+<!--                <field name="product_barcode" string="JAN/UPC/EAN"/>-->
+                <field name="product_id" invisible="1"/>
+                <field name="invoice_custom_standardnumber"
+                       attrs="{'invisible': [('x_invoicelinetype', '=', 'サンプル')]}"
+                       widget="refer_field" context="{'limit': 200,'company_id':parent.company_id}"
+                       options='{"model":"product.product", "column": "invoice_custom_standardnumber", "search_input": true, "standard_column": "product_custom_standardnumber", "search_columns": ["product_custom_standardnumber"], "alternative_column":"product_barcode", "alternative_value":"barcode"}'/>
+                <field name="product_barcode" string="JAN/UPC/EAN"
+                    context="{'limit': 200,'company_id':parent.company_id}"
+                       widget="refer_field" options='{"model":"product.product","column": "barcode", "search_input": true, "standard_column": "product_barcode", "search_columns": ["barcode"], "alternative_column":"invoice_custom_standardnumber", "alternative_value":"product_custom_standardnumber"}'
+                       attrs="{'required': [('x_invoicelinetype', '!=', 'サンプル')], 'invisible': [('x_invoicelinetype', '=', 'サンプル')]}"/>
+<!--                <field name="product_maker_name"-->
+<!--                       widget="refer_field" options='{"model":"product.product","column": "product_maker_name"}'-->
+<!--                       attrs="{'invisible': [('x_invoicelinetype', '=', 'サンプル')]}"/>-->
+                <field name="product_maker_name" attrs="{'invisible': [('x_invoicelinetype', '=', 'サンプル')]}"/>
+                <field name="supplier_code"  widget="many2one" readonly="False" force_save="1"
+                       attrs="{'invisible': [('x_invoicelinetype', '=', 'サンプル')]}"
+                         options="{'always_reload': True, 'no_create': True, 'no_edit': True, 'no_open': True,}"/>
+
+                <field name="product_name" string="商品名" widget="textarea" maxbytes="40"/>
+<!--                <field name="product_name2" string="商品名2"/>-->
+<!--                <field name="invoice_custom_standardnumber"-->
+<!--                       widget="refer_field" options='{"model":"product.product","column": "product_custom_standardnumber"}'-->
+<!--                       attrs="{'invisible': [('x_invoicelinetype', '=', 'サンプル')]}"/>-->
+                <field name="product_code" widget="refer_field" string="Product Code"
+                    context="{'limit': 200,'company_id':parent.company_id}"
+                       attrs="{'invisible': [('x_invoicelinetype', '=', 'サンプル')]}"
+                       options='{"model":"product.product", "read_column": "code_by_setting", "search_columns": ["product_code_1", "product_code_2", "product_code_3", "product_code_4", "product_code_5", "product_code_6"], "alternative_column":"product_barcode", "alternative_value":"barcode", "search_input": true}'/>
+                <field name="quantity" string="Quantity" autocomplete="off"
+                       attrs="{'invisible': [('x_invoicelinetype', '=', 'サンプル')]}"/>
+                <field name="product_uom_id" string="UoM" style="text-align:right; justify-content: flex-end;"
+                       attrs="{'invisible': [('x_invoicelinetype', '=', 'サンプル')]}"/>
+                <field name="price_unit" string="Price" readonly="0" autocomplete="off"
+                       attrs="{'invisible': [('x_invoicelinetype', '=', 'サンプル')]}"
+                       widget="refer_field"
+                        context="{'price_history':True, 'tree_view_ref':'Maintain_Invoice_Remake.invoice_customer_price_history_view'}"
+                        options='{"model":"account.move.line","column": "price_unit", "alternative_column":"price_unit", "alternative_value":"price_unit","search_columns": ["product_barcode"],"search_values": ["product_barcode"]}'/>
+                <field name="invoice_custom_lineamount"
+                       attrs="{'invisible': [('x_invoicelinetype', '=', 'サンプル')]}"/>
+                <field name="product_standard_price" autocomplete="off"
+                       attrs="{'invisible': [('x_invoicelinetype', '=', 'サンプル')]}"/>
+                <field name="x_product_cost_price" autocomplete="off"
+                       attrs="{'invisible': [('x_invoicelinetype', '=', 'サンプル')]}"/>
+                <field name="is_required_cost" invisible="True"/>
+                <field name="invoice_custom_Description"
+                       attrs="{'invisible': [('x_invoicelinetype', '=', 'サンプル')]}"/>
+<!--                <field name="tax_rate" string="Tax Rate"-->
+<!--                       attrs="{'invisible': [('x_invoicelinetype', '=', 'サンプル')],-->
+<!--                               'readonly': [('product_tax_category', '=', 'exempt')]}"/>-->
+                <field name="tax_rate" string="Tax Rate"
+                       attrs="{'invisible': [('x_invoicelinetype', '=', 'サンプル')]}"/>
+
+                    <field name="move_name" invisible="1"/>
+                    <field name="product_tax_category" invisible="1" force_save="1"/>
+                    <field name="account_id" invisible="1" groups="account.group_account_user"
+                           domain="[('deprecated', '=', False), ('user_type_id.type', 'not in', ('receivable', 'payable')), ('company_id', '=', parent.company_id)]"
+                           attrs="{'required': [('display_type', '=', False)]}"/>
+                    <field name="analytic_account_id" invisible="1"
+                           domain="['|', ('company_id', '=', False), ('company_id', '=', parent.company_id)]"
+                           groups="analytic.group_analytic_accounting" optional="show"/>
+                    <field name="analytic_tag_ids" invisible="1"
+                           domain="['|', ('company_id', '=', False), ('company_id', '=', parent.company_id)]"
+                           groups="analytic.group_analytic_tags" optional="show" widget="many2many_tags"/>
+
+                    <!-- Others fields -->
+                    <field name="partner_id" invisible="1"/>
+                    <field name="amount_currency" invisible="1"/>
+                    <field name="currency_id" invisible="1"/>
+                    <field name="debit" invisible="1"/>
+                    <field name="credit" invisible="1"/>
+                    <field name="date" invisible="1"/>
+                    <field name="date_maturity" invisible="1"/>
+
+                    <field name="tax_line_id" invisible="1"/>
+                    <field name="tax_repartition_line_id" invisible="1"/>
+                    <field name="tag_ids" invisible="1"/>
+                    <field name="tax_base_amount" invisible="1"/>
+                    <field name="tax_exigible" invisible="1"/>
+                    <field name="company_id" invisible="1"/>
+                    <field name="company_currency_id" invisible="1"/>
+                    <field name="recompute_tax_line" invisible="1" force_save="1"/>
+                    <field name="display_type" force_save="1" invisible="1"/>
+                    <field name="is_rounding_line" invisible="1"/>
+                    <field name="exclude_from_invoice_tab" invisible="1"/>
+                    <field name="account_internal_type" invisible="1"/>
+                    <field name="always_set_currency_id" invisible="1"/>
+                    <field name="price_no_tax" invisible="1"/>
+                    <field name="price_include_tax" invisible="1"/>
+                </tree>
+            </xpath>
+            <xpath expr="//field[@name='line_ids']/tree/field[@name='account_id']" position="before">
+                <field name="invoice_custom_line_no" readonly="1" force_save="1"/>
+                <field name="x_invoicelinetype"/>
+                <field name="product_code"/>
+                <field name="product_barcode"/>
+                <field name="product_maker_name"/>
+                <field name="supplier_code"/>
+                <field name="product_name"/>
+                <field name="product_tax_category" invisible="1" force_save="1"/>
+                <field name="invoice_custom_standardnumber"/>
+                <field name="line_tax_amount"/>
+                <field name="quantity" string="Quantity"/>
+                <field name="price_unit" string="Price"/>
+                <field name="product_uom_id" string="UoM" required="True"/>
+                <field name="invoice_custom_lineamount"/>
+                <field name="product_standard_price"/>
+                <field name="x_product_cost_price"/>
+                <field name="x_history_detail" domain="[('exclude_from_invoice_tab', '=', False)]" invisible="1"
+                       position="attributes" widget="button_field"
+                       options='{"model":"account.move.line", "text":"売上履歴問合せ"}'
+                       context="{'tree_view_ref':'account.view_move_line_tree_grouped_general'}"/>
+                <field name="invoice_custom_Description"/>
+                <field name="tax_rate"/>
+                <field name="price_no_tax"/>
+                <field name="price_include_tax"/>
+            </xpath>
+            <xpath expr="//field[@name='line_ids']" poisition="attributes">
+                <attribute name="context">{'default_line_ids': line_ids, 'default_move_id': id, 'line_ids': line_ids,
+                                           'journal_id': journal_id, 'default_partner_id': commercial_partner_id,
+                                           'default_currency_id': currency_id != company_currency_id and currency_id or False}</attribute>
+            </xpath>
+
+            <xpath expr="//field[@name='line_ids']/tree/field[@name='discount']" position="attributes">
+                <attribute name="invisible">0</attribute>
+            </xpath>
+            <!--        <xpath expr = "//page[@id='aml_tab']" position = "after" >-->
+            <!--          <page id="invoice_tax" string="Invoice Tax" name="invoice_tax" >-->
+            <!--              <field name="invoice_line_ids_tax" class="custom_template">-->
+            <!--                  <tree editable="bottom" create="false" delete="false" string="Journal Items1">-->
+            <!--                      <button name="button_update" type="object" class="oe_edit_only"-->
+            <!--                              style="background : url('/web/static/src/img/form-toolbar/EditRecord16.png')-->
+            <!--                              no-repeat center;-->
+            <!--                              background-size: contain;-->
+            <!--                              background-color: transparent;-->
+            <!--                              display: inline-block;-->
+            <!--                              margin-left: 1px;-->
+            <!--                              margin-right: 1px;-->
+            <!--                              width: 16px;-->
+            <!--                              height: 16px;-->
+            <!--                              padding: 1px;-->
+            <!--                              border: none;"/>-->
+            <!--                      <field name="move_name" readonly="True"/>-->
+            <!--                      <field name="taxGroup" readonly="True"/>-->
+            <!--                      <field name="tax_base_amount" readonly="True"/>-->
+            <!--                      <field name="tax_amount" readonly="True"/>-->
+            <!--                      <field name="price_include_tax" invisible="1" readonly="True"/>-->
+            <!--                      <field name="tax_provider" readonly="True"/>-->
+            <!--                  </tree>-->
+            <!--                </field>-->
+            <!--          </page>-->
+            <!--        </xpath>-->
+            <xpath expr="//page[@id='other_tab']" position="attributes">
+                <attribute name="invisible">1</attribute>
+            </xpath>
+            <xpath expr="//group[@class='oe_subtotal_footer']" position="replace">
+                <group class="oe_subtotal_footer oe_right" colspan="2" name="sale_total">
+                    <field name="amount_untaxed" widget='monetary' options="{'currency_field': 'currency_id'}"
+                           string="Total Lines*"/>
+                    <field name="x_voucher_tax_amount"
+                           attrs="{'readonly': [('x_voucher_tax_transfer', '!=', 'custom_tax')]}"
+                           string="Voucher Tax Amount*"
+                           options="{'currency_field': 'currency_id'}"/>
+                    <div class="oe_subtotal_footer_separator oe_inline o_td_label">
+                        <label for="amount_total" string="Grand Total*"/>
+                    </div>
+                    <field name="amount_total" nolabel="1" string="Grand Total*"
+                           class="oe_subtotal_footer_separator" widget='monetary'
+                           options="{'currency_field': 'currency_id'}"/>
+                </group>
+	             <group class="oe_subtotal_footer oe_right" colspan="2" name="cost_total" attrs="{'invisible': [('profit_management_flg', '=', False)]}">
+	                 <field name="amount_cost" widget='monetary' string="原価合計"/>
+	                 <field name="amount_gross_profit" widget='monetary' string="粗利合計"/>
+	                 <div class="oe_subtotal_footer_separator oe_inline o_td_label"/>
+	                 <field name="gross_profit_rate" widget="percentage" string="粗利率" class="oe_subtotal_footer_separator"/>
+	                 <field name="profit_management_flg"  invisible="1"/>
+	            </group>                
+                
+            </xpath>
+            <xpath expr="//field[@name='narration']" position="attributes">
+                <attribute name="invisible">1</attribute>
+            </xpath>
+            <xpath expr="//div[contains(@class, 'oe_chatter')]" position="replace"/>
+            <xpath expr="//div[contains(@class, 'o_attachment_preview')]" position="replace"/>
+        </field>
+    </record>
+
+    <!--  Invoice Tax Tree  -->
+    <record id="account_tax_line_form" model="ir.ui.view">
+        <field name="name">account.tax.line.form</field>
+        <field name="model">account.tax.line</field>
+        <field name="mode">primary</field>
+        <field name="priority" eval="7"/>
+        <field name="arch" type="xml">
+            <form string="Invoice Tax" class="invoice_tax_custom custom_template">
+                <group>
+                    <group style="width: 33%;">
+                        <field name="client" readonly="True" string="Client*"/>
+                        <field name="move_name" readonly="True" string="Invoice*"/>
+                    </group>
+                    <group style="width: 33%;">
+                        <field name="organization" readonly="True" string="Organization*"/>
+                    </group>
+                    <group style="width: 33%;">
+                    </group>
+
+                    <group style="width: 33%;">
+                        <field name="taxGroup" readonly="True" string="Tax*"/>
+                        <field name="tax_base_amount" readonly="True" string="Tax base Amount*"/>
+                    </group>
+                    <group style="width: 33%;">
+                        <label for="price_include_tax" invisible="True"/>
+                        <div>
+                            <field name="price_include_tax" widget="boolean_tags" readonly="True"/>
+                            <label for="price_include_tax"/>
+                        </div>
+
+                        <field name="tax_amount" readonly="True" string="Tax Amount*"/>
+                    </group>
+                    <group style="width: 33%;">
+                        <field name="tax_provider" readonly="True"/>
+                    </group>
+                </group>
+                <footer>
+                    <button data-dismiss="modal" string="Close"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <!--  Invoice Lines Tree  -->
+    <record id="view_move_line_custom_form" model="ir.ui.view">
+        <field name="name">account.move.line.custom.form</field>
+        <field name="model">account.move.line</field>
+        <field name="mode">primary</field>
+        <field eval="1" name="priority"/>
+        <field name="inherit_id" ref="account.view_move_line_form"/>
+        <field name="arch" type="xml">
+            <xpath expr='//sheet/group[1]' position="replace">
+                <group>
+                    <group>
+                        <field name="name" invisible="1"/>
+                        <field name="partner_id"
+                               domain="['|', ('parent_id', '=', False), ('is_company', '=', True)]"
+                               attrs="{'readonly': [('parent_state', '=', 'posted')]}" invisible="1"/>
+                        <field name="x_invoicelinetype" required="True" string="内訳区分"/>
+                        <field name="product_barcode" widget="product_many2one" context="{'show_product_jan': 1}"/>
+                        <field name="product_maker_name"/>
+                        <field name="product_name" string="商品名"/>
+                        <field name="invoice_custom_standardnumber"/>
+                    </group>
+                    <group>
+                        <field name="product_id" string="Product" widget="product_many2one"
+                        />
+                        <field name="price_unit" string="Price" readonly="1"/>
+                        <field name="invoice_custom_lineamount"/>
+                        <!--                        <field name="product_uom_id" readonly="1" widget="selection" options="{'no_quick_create':True,'no_create_edit':True , 'no_open': True}" string="UoM"/>-->
+                        <!--                        <field name="line_tax_amount" string="Tax Amount" attrs="{'readonly': [('parent.x_voucher_tax_transfer', '!=', 'custom_tax')]}"/>-->
+                        <field name="tax_ids" string="Taxes"
+                               widget="many2many_tags" readonly="False"
+                               domain="[('type_tax_use', '=?', parent.invoice_filter_type_domain), ('company_id', '=', parent.company_id)]"
+                               context="{'append_type_to_tax_name': not parent.invoice_filter_type_domain}"
+                               options="{'no_quick_create':True,'no_create_edit':True , 'no_open': True}"/>
+                        <field name="x_product_cost_price"/>
+                        <field name="invoice_custom_Description"/>
+                    </group>
+                </group>
+
+            </xpath>
+            <xpath expr='//sheet' position="after">
+                <footer>
+                    <button string="Save" class="btn btn-primary o_form_button_save" special="save"/>
+                    <button data-dismiss="modal" string="Close"/>
+                </footer>
+            </xpath>
+            <xpath expr='//sheet/notebook' position="attributes">
+                <attribute name="invisible">1</attribute>
+            </xpath>
+        </field>
+    </record>
+    <!--  <record id="view_crm_purchased_products_tree" model="ir.ui.view">-->
+    <!--        <field name="name">crm.purchased_products.tree</field>-->
+    <!--        <field name="model">crm.purchased_products</field>-->
+
+    <!--        <field name="arch" type="xml">-->
+    <!--            <tree string="Reference Document">-->
+    <!--                <field name="code"/>-->
+    <!--                <field name="barcode" required="True" string="UPC/EAN"/>-->
+    <!--                <field name="name" string="Name"/>-->
+    <!--                <field name="product_custom_goodsnamef"/>-->
+    <!--                <field name="description"/>-->
+    <!--                <field name="categ_id" string="Product Category"/>-->
+    <!--                <field name="taxes_id" string='Tax Category' widget="many2many_tags"/>-->
+
+    <!--                <field name="product_custom_standardnumber" optional="hide"/>-->
+    <!--                <field name="uom_id" required="False" string="UOM" optional="hide"/>-->
+    <!--                <field name="type" string="Product Type" required="False" optional="hide"/>-->
+    <!--                <field name="product_custom_is_stocked" optional="hide"/>-->
+    <!--                <field name="product_custom_modelnumber" optional="hide"/>-->
+    <!--                <field name="product_custom_freight_category" optional="hide"/>-->
+    <!--                <field name="product_custom_comment_help" optional="hide"/>-->
+    <!--                <field name="product_custom_document_note" optional="hide"/>-->
+    <!--                <field name="product_custom_is_active" optional="hide"/>-->
+    <!--                <field name="write_date" optional="hide"/>-->
+    <!--            </tree>-->
+    <!--        </field>-->
+    <!--    </record>-->
+    <record id="invoice_template_action" model="ir.actions.act_window">
+        <field name="name">売上入力</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">account.move</field>
+        <field name="view_mode">tree,form</field>
+        <field name="view_id" ref="invoice_custom_tree"/>
+        <field name="context">{'form_view_initial_mode': 'edit', 'force_detailed_view': 'true'}</field>
+    </record>
+
+    <menuitem action="account.action_move_out_invoice_type" parent="account.menu_finance" sequence="1"
+              id="menu_action_invoice" name="Invoicing"/>
+
+
+</odoo>

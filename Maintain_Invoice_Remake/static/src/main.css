@@ -1,0 +1,337 @@
+/*
+.invoice_create table th{
+    text-align: left!important;
+}
+
+.invoice_create table td, .invoice_create table th{
+    vertical-align: middle!important;
+}
+
+.invoice_create table th:nth-last-child(2),.invoice_create table th:nth-last-child(3),.invoice_create table th:nth-last-child(4),.invoice_create table th:nth-last-child(5),
+.invoice_create table th:nth-last-child(6),
+.invoice_create table th:nth-last-child(7)
+{
+  width:100%!important;
+}
+
+.invoice_create table td
+{
+
+}
+
+.invoice_create table td .o_list_number{
+    text-align:right;
+}
+
+.invoice_create table td div{
+
+    border: dotted 1px #dddddd;
+    padding: 2px;
+
+}
+*/
+
+.invoice_create div.o_field_x2many_list_row_delete_m{
+    background : url('/web/static/src/img/form-toolbar/Delete24.png') no-repeat center;
+    background-size:contain;
+    background-color: transparent;
+    margin: 0px 0px 5px 13px;
+    width: 20px;
+    height: 20px;
+    padding: 1px;
+    border: none;
+    display:none;
+    cursor: pointer;
+    color: #7C7BAD;
+    text-decoration: none;
+}
+.invoice_create div.o_field_x2many_list_row_delete_m_custom{
+    background : url('/web/static/src/img/form-toolbar/Delete24.png') no-repeat center;
+    background-size:contain;
+    background-color: transparent;
+    display: inline-block;
+    margin: 0px 0px 5px 13px;
+    width: 20px;
+    height: 20px;
+    padding: 1px;
+    border: none;
+    cursor: pointer;
+    color: #7C7BAD;
+    text-decoration: none;
+}
+.invoice_create div.o_field_x2many_list_row_delete_m_custom .delete_m_custom_tooltiptext{
+    visibility: hidden;
+    width: 80px;
+    background-color: black;
+    color: #fff;
+    text-align: center;
+    padding: 5px 0;
+    border-radius: 6px;
+
+    /* Position the tooltip text - see examples below! */
+    position: absolute;
+    z-index: 1;
+    margin-left: 25px;
+}
+
+.invoice_create div.o_field_x2many_list_row_delete_m_custom:hover .delete_m_custom_tooltiptext {
+    visibility: visible;
+}
+.invoice_create div.o_field_x2many_list_row_copy_m{
+    background : url('/web/static/src/img/form-toolbar/copy.png') no-repeat center;
+    background-size:contain;
+    background-color: transparent;
+    display: inline-block;
+    margin: 0px 0px 5px 13px;
+    width: 20px;
+    height: 20px;
+    padding: 1px;
+    border: none;
+    cursor: pointer;
+    color: #7C7BAD;
+    text-decoration: none;
+}
+
+.invoice_create div.o_field_x2many_list_row_copy_m .copy_m_tooltiptext{
+    visibility: hidden;
+    width: 80px;
+    background-color: black;
+    color: #fff;
+    text-align: center;
+    padding: 5px 0;
+    border-radius: 6px;
+
+    /* Position the tooltip text - see examples below! */
+    position: absolute;
+    z-index: 1;
+    margin-left: 25px;
+}
+
+.invoice_create div.o_field_x2many_list_row_copy_m:hover .copy_m_tooltiptext {
+    visibility: visible;
+}
+.invoice_create .o_field_x2many_list_row_add a:nth-child(1){
+    display: none;
+}
+
+.invoice_create table th{
+    text-align: left!important;
+}
+
+
+
+.invoice_create table td, .invoice_create table th{
+    vertical-align: middle!important;
+}
+
+/*.invoice_create table th:nth-last-child(9)*/
+/*{*/
+/*  width:2%!important;*/
+/*}*/
+
+/*.invoice_create table th:nth-last-child(8)*/
+/*{*/
+/*  width:2%!important;*/
+/*}*/
+
+/*.invoice_create table th:nth-last-child(1)*/
+/*{*/
+/*  width:10%!important;*/
+/*  min-width:10%!important;*/
+/*}*/
+
+
+.invoice_create table td div:not(.o_tag_color_0)
+{
+    height:25px!important;
+    width: 100%!important;
+}
+.invoice_create table td pre
+{
+    margin: unset;
+    padding-top: 5px;
+    font-size: 13px;
+    font-family: inherit;
+
+}
+.invoice_create table td pre textarea {
+    min-height: 25px;
+    padding-top: 2px;
+    padding-bottom: 0px;
+    border-bottom-width: 1px;
+    border-top-width: 1px;
+    line-height: 14px;
+    font-size: 13px;
+    font-family: inherit;
+}
+.invoice_create .o_tag_color_0{
+    min-width:50px!important;
+}
+
+
+.invoice_create table td .o_list_number{
+    text-align:right;
+}
+
+.invoice_create table th:nth-last-child(14)
+{
+  max-width:30px!important;
+}
+.invoice_create table th:nth-last-child(13)
+{
+  width:2%!important;
+}
+.invoice_create table th:nth-last-child(12)
+{
+  width:5%!important;
+}
+/*standardnumber*/
+.invoice_create table th:nth-last-child(11)
+{
+  width:7%!important;
+}
+/*商品名*/
+.invoice_create table th:nth-last-child(10)
+{
+  width:7%!important;
+}
+/*商品名2*/
+.invoice_create table th:nth-last-child(9)
+{
+  width:23%!important;
+}
+/*Product Code*/
+.invoice_create table th:nth-last-child(8)
+{
+  width:7%!important;
+}
+/*Quantity*/
+.invoice_create table th:nth-last-child(7)
+{
+  width:5%!important;
+}
+/*UoM*/
+.invoice_create table th:nth-last-child(6)
+{
+  width:5%!important;
+}
+/*Price*/
+.invoice_create table th:nth-last-child(5)
+{
+   width:8%;
+   min-width: 100px;
+}
+
+/*Line Amount*/
+.invoice_create table th:nth-last-child(4)
+{
+  width:10%!important;
+}
+/*Standard Price*/
+.invoice_create table th:nth-last-child(3)
+{
+  width:7%!important;
+}
+/*Description*/
+.invoice_create table th:nth-last-child(2)
+{
+  width:12%!important;
+}
+
+
+.invoice_create .button_update_tooltiptext{
+    visibility: hidden;
+    width: 60px;
+    background-color: black;
+    color: #fff;
+    text-align: center;
+    padding: 5px 0;
+    border-radius: 6px;
+
+    /* Position the tooltip text - see examples below! */
+    position: absolute;
+    z-index: 1;
+    margin-left: 20px;
+}
+
+.invoice_create .button_update:hover .button_update_tooltiptext{
+    visibility: visible;
+}
+
+
+.invoice_create .button_add_tooltiptext{
+    visibility: hidden;
+    width: 60px;
+    background-color: black;
+    color: #fff;
+    text-align: center;
+    padding: 5px 0;
+    border-radius: 6px;
+
+    /* Position the tooltip text - see examples below! */
+    position: absolute;
+    z-index: 1;
+    margin-left: 20px;
+}
+
+.invoice_create .button_add:hover .button_add_tooltiptext{
+    visibility: visible;
+}
+
+.invoice_create .button_goto_tooltiptext{
+    visibility: hidden;
+    width: 60px;
+    background-color: black;
+    color: #fff;
+    text-align: center;
+    padding: 5px 0;
+    border-radius: 6px;
+
+    /* Position the tooltip text - see examples below! */
+    position: absolute;
+    z-index: 1;
+    margin-left: 20px;
+}
+
+.invoice_create .button_goto:hover .button_goto_tooltiptext{
+    visibility: visible;
+}
+
+.loading-indicator {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(255, 255, 255, 0.8);
+      z-index: 9999;
+      display: flex;
+      justify-content: center;
+      align-content: center;
+      align-items: center;
+      flex-direction: column;
+}
+.form-mask{
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(255, 255, 255, 0.8);
+      z-index: 9999;
+      display: flex;
+      justify-content: center;
+      align-content: center;
+      align-items: center;
+      flex-direction: column;
+      cursor: not-allowed;
+}
+.hide{
+    display: none !important;
+}
+.loading-indicator .spinner-border {
+  color: #000000;
+}
+.loading-indicator .spinner-border .sr-only{
+  color: #000000;
+}
